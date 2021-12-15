@@ -15,7 +15,7 @@ import math, random
 #Number of rounds for the attack
 rounds = 15
 #Number of pairs in log2
-pairs = 12
+pairs = 9
 
 #Constants, S-box, Permutation
 rc0 = [0, 0, 1, 3, 7, 0xf, 0xf, 0xf, 0xe, 0xd, 0xa, 5, 0xa, 5, 0xb, 6, 0xc, 9, 3, 6, 0xd, 0xb, 7, 0xe, 0xd, 0xb, 6, 0xd, 0xa, 4, 9, 2, 4, 9, 3, 7, 0xe, 0xc, 8, 1, 2]
@@ -117,9 +117,23 @@ def main():
     """
 
     
-    #Key    
-    K0_1 = 0xFEDCBA9876543210
-    K1_1 = 0xFEDCBA9876543210
+    #Key
+    K0_1 = random.getrandbits(64)
+    K1_1 = random.getrandbits(64)
+
+    #Target keys
+    #k0_4
+    t4 = K0_1 & 0x00000000000F0000
+    t4 = t4>>16
+    #k0_7
+    t7 = K0_1 & 0x00000000F0000000
+    t7 = t7>>28
+    #k0_10
+    t10 = K0_1 & 0x00000F0000000000
+    t10 = t10>>40
+    #k0_14
+    t14 = K0_1 & 0x0F00000000000000
+    t14 = t14>>56
 
     #Related key
     K0_2 = K0_1 ^ 0x0000000010000010
@@ -174,11 +188,7 @@ def main():
         filter = [0,16,22,26,30]
         invalid = 0
         for i in filter:
-            if (m1[0] ^ m2[0]) != 0:
-                #If pair is invalid, discard
-                invalid = 1
-                break
-            if ( (s[m1[0]]^s[m2[0]]) ^ (m1[1] ^ m2[1]) != 0):
+            if ( (s[m1[i]]^s[m2[i]]) ^ (m1[i+1] ^ m2[i+1]) != 0):
                 #If pair is invalid, discard
                 invalid = 1
                 break
@@ -351,28 +361,28 @@ def main():
     for key in keyCounter0:
         if keyCounter0[key] == highest[0]:
             counter = counter+1    
-    print("Highest counter = {}, Number of keys with the counter = {}, Target key counter = {}".format(highest[0], counter, keyCounter0[0x4]))
+    print("Highest counter = {}, Number of keys with the counter = {}, Target key counter = {}".format(highest[0], counter, keyCounter0[t4]))
     print("Length of key counter = 2^{}".format(math.log(len(keyCounter0),2)))
 
     counter = 0
     for key in keyCounter1:
         if keyCounter1[key] == highest[1]:
             counter = counter+1    
-    print("Highest counter = {}, Number of keys with the counter = {}, Target key counter = {}".format(highest[1], counter, keyCounter1[0x7]))
+    print("Highest counter = {}, Number of keys with the counter = {}, Target key counter = {}".format(highest[1], counter, keyCounter1[t7]))
     print("Length of key counter = 2^{}".format(math.log(len(keyCounter1),2)))
 
     counter = 0
     for key in keyCounter2:
         if keyCounter2[key] == highest[2]:
             counter = counter+1    
-    print("Highest counter = {}, Number of keys with the counter = {}, Target key counter = {}".format(highest[2], counter, keyCounter2[0xA]))
+    print("Highest counter = {}, Number of keys with the counter = {}, Target key counter = {}".format(highest[2], counter, keyCounter2[t10]))
     print("Length of key counter = 2^{}".format(math.log(len(keyCounter2),2)))
 
     counter = 0
     for key in keyCounter3:
         if keyCounter3[key] == highest[3]:
             counter = counter+1    
-    print("Highest counter = {}, Number of keys with the counter = {}, Target key counter = {}".format(highest[3], counter, keyCounter3[0xE]))
+    print("Highest counter = {}, Number of keys with the counter = {}, Target key counter = {}".format(highest[3], counter, keyCounter3[t14]))
     print("Length of key counter = 2^{}".format(math.log(len(keyCounter3),2)))
 
 
