@@ -2,7 +2,7 @@
 @author: jesenteh
 Date: 9 December, 2021
 This Python script implements WARP and checks its correctness by using the test vectors provided in WARP's design specification.
-It also computationally verifies the differential probability of a odd-round (3 to 41) related-key differential found for WARP.
+It also computationally verifies the differential probability of a related-key differential found for WARP.
 """
 
 from scipy.stats import norm
@@ -82,10 +82,16 @@ def enc(p1, p0, k1, k0, rounds):
             p = roundFunc(p, K1, r, rounds)
     return p
 
-def checkDiff(diff):
+def checkDiff(diff,rounds):
+
     #Target difference
-    p0 = 0x0000010000000000
-    p1 = 0x0000000000000000
+    if (rounds%2!=0):
+        p0 = 0x0000010000000000
+        p1 = 0x0000000000000000
+    else:
+        p0 = 0x0000000000001000
+        p1 = 0x0000000000000000
+
 
     mask = 0xF
     p = []
@@ -100,10 +106,10 @@ def checkDiff(diff):
     return p==diff
 
 def verifyRK(pairs, rounds):
-    #Key
-    k0_1 = 0xFEDCBA9876543210
-    k1_1 = 0x0123456789ABCDEF
 
+    # #Key
+    k0_1 = random.getrandbits(64)
+    k1_1 = random.getrandbits(64)
     #Related key
     k0_2 = k0_1 ^ 0x0000000010000010
     k1_2 = k1_1 ^ 0x0000000000200000
@@ -138,11 +144,11 @@ def verifyRK(pairs, rounds):
             diff[perm[i]]=temp[i]
 
         #Check difference and increment counter
-        countpairs = countpairs + checkDiff(diff)
+        countpairs = countpairs + checkDiff(diff,rounds)
     print("Number of input pairs = 2^{}".format(pairs))
     print("Valid pairs = 2^{}".format(math.log(countpairs,2)))
     print("Differential probability = 2^{}".format(math.log(countpairs,2)-pairs))
-
+    return math.log(countpairs,2)-pairs
 
 
 def main():
@@ -179,11 +185,16 @@ def main():
     printHex(p)
 
     #Verify
-    rounds = 15 #Odd rounds 3,5,7,...,41
+    rounds = 10 
     print("\nVerification for {}-round related-key trail with expected probability of 2^({})".format(rounds,rounds-1))
     #In log2
-    numpairs = 16
-    verifyRK(numpairs, rounds)
+    numpairs = 12
+    ave = 0
+    numtest = 100
+    for i in range (0, numtest):
+        ave = ave + verifyRK(numpairs, rounds)
+    ave = ave/numtest
+    print(ave)
 
 
 if __name__ == '__main__':
