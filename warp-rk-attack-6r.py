@@ -8,7 +8,6 @@ For fast verification, use 9+6=15 rounds (9-round distinguisher 2^-8) and 2^12 p
 For 25-round verification, change rounds to 25 and set to 2^21 or 2^22 pairs
 """
 
-from scipy.stats import norm
 import math, random
 
 
