@@ -1,8 +1,8 @@
-#Differential Cryptanalysis of WARP
+# Differential Cryptanalysis of WARP
 
-Verification for the related-key attack on WARP (https://eprint.iacr.org/2021/1641)
+### Verification for the related-key attack on WARP: https://eprint.iacr.org/2021/1641
 
-For the CryptoSMT boomerang tool, please visit: https://github.com/jesenteh/cryptosmt-boomerang
+### For the CryptoSMT boomerang tool: https://github.com/jesenteh/cryptosmt-boomerang
 
 Instructions:
 1. Run ```python3 attack.py``` to perform a 15-round related-key attack using 2^9 chosen plaintext pairs for fast verification.
