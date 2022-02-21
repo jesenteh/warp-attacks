@@ -1,4 +1,4 @@
-Verification for WARP Related-key Attack (https://eprint.iacr.org/2021/1641)
+Verification for the related-key attack on WARP (https://eprint.iacr.org/2021/1641)
 
 Instructions:
 
